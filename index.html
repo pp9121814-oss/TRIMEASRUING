@@ -1,0 +1,490 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TriMeasure | Height Calculator</title>
+
+<style>
+:root {
+  --bg: #0b1120;
+  --card: #142139;
+  --mint: #5eead4;
+  --blue: #60a5fa;
+  --text: #edf4ff;
+  --muted: #a4b3c9;
+}
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font-family: Arial, sans-serif;
+}
+
+.container {
+  max-width: 1050px;
+  margin: auto;
+  padding: 25px 18px;
+}
+
+header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 35px;
+}
+
+.logo {
+  font-size: 24px;
+  font-weight: bold;
+  color: var(--mint);
+}
+
+.tag {
+  font-size: 12px;
+  color: var(--mint);
+  border: 1px solid #34516a;
+  padding: 8px 12px;
+  border-radius: 20px;
+}
+
+.hero h1 {
+  font-size: clamp(34px, 6vw, 55px);
+  margin-bottom: 12px;
+}
+
+.hero h1 span { color: var(--mint); }
+
+.hero p {
+  color: var(--muted);
+  line-height: 1.7;
+  max-width: 650px;
+}
+
+.layout {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+  margin-top: 28px;
+}
+
+.card {
+  background: var(--card);
+  border: 1px solid #293b55;
+  border-radius: 18px;
+  padding: 22px;
+  margin-bottom: 18px;
+}
+
+h2 { margin-top: 0; }
+
+label {
+  display: block;
+  font-size: 14px;
+  margin: 18px 0 8px;
+}
+
+input, select {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid #3a506b;
+  border-radius: 9px;
+  background: #0b1424;
+  color: white;
+  font-size: 15px;
+}
+
+input[type="range"] {
+  padding: 0;
+  accent-color: var(--mint);
+}
+
+.row {
+  display: grid;
+  grid-template-columns: 1fr 130px;
+  gap: 8px;
+}
+
+small, .muted {
+  color: var(--muted);
+  font-size: 12px;
+}
+
+button {
+  padding: 13px 16px;
+  border: none;
+  border-radius: 9px;
+  font-weight: bold;
+  cursor: pointer;
+  margin-top: 20px;
+}
+
+.primary {
+  background: var(--mint);
+  color: #071321;
+  width: 100%;
+}
+
+.reset {
+  background: #293b55;
+  color: white;
+  width: 100%;
+  margin-top: 9px;
+}
+
+.result {
+  border-color: #28615f;
+  background: linear-gradient(140deg, #123635, #142139);
+}
+
+.result-number {
+  color: var(--mint);
+  font-size: clamp(35px, 5vw, 52px);
+  font-weight: bold;
+  overflow-wrap: anywhere;
+}
+
+.stats {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 18px;
+  margin-top: 22px;
+}
+
+.stats strong {
+  display: block;
+  margin-top: 5px;
+}
+
+.formula {
+  border-top: 1px solid #344762;
+  margin-top: 25px;
+  padding-top: 16px;
+  line-height: 1.8;
+}
+
+.formula strong { color: var(--mint); }
+
+#error {
+  color: #fda4af;
+  font-size: 13px;
+}
+
+svg {
+  width: 100%;
+  height: auto;
+}
+
+footer {
+  text-align: center;
+  padding: 25px 0;
+  color: var(--muted);
+  font-size: 12px;
+}
+
+@media(max-width: 720px) {
+  .layout { grid-template-columns: 1fr; }
+  .row { grid-template-columns: 1fr 115px; }
+}
+</style>
+</head>
+
+<body>
+<div class="container">
+
+<header>
+  <div class="logo">△ TriMeasure</div>
+  <div class="tag">CLASS 10 TRIGONOMETRY</div>
+</header>
+
+<section class="hero">
+  <h1>Measure the <span>unmeasurable.</span></h1>
+  <p>
+    Calculate the height of trees, buildings, poles and other
+    objects using Class 10 trigonometry. Enter your distance,
+    angle of elevation and eye height.
+  </p>
+</section>
+
+<div class="layout">
+
+<section class="card">
+  <h2>Measurement inputs</h2>
+  <p class="muted">Enter your measured values below.</p>
+
+  <label for="distance">Horizontal distance</label>
+  <div class="row">
+    <input id="distance" type="number" min="0.01"
+           step="any" value="20">
+    <select id="distanceUnit">
+      <option value="m">Metres</option>
+      <option value="cm">Centimetres</option>
+      <option value="ft">Feet</option>
+    </select>
+  </div>
+
+  <label for="angle">
+    Angle of elevation:
+    <strong id="angleValue">35°</strong>
+  </label>
+  <input id="angle" type="range" min="1" max="89" value="35">
+  <small>Adjust the angle measured from eye level.</small>
+
+  <label for="eye">Eye / instrument height</label>
+  <div class="row">
+    <input id="eye" type="number" min="0"
+           step="any" value="1.5">
+    <select id="eyeUnit">
+      <option value="m">Metres</option>
+      <option value="cm">Centimetres</option>
+      <option value="ft">Feet</option>
+    </select>
+  </div>
+
+  <label for="precision">Decimal precision</label>
+  <select id="precision">
+    <option value="2">2 decimal places</option>
+    <option value="1">1 decimal place</option>
+    <option value="3">3 decimal places</option>
+  </select>
+
+  <button class="primary" id="calculate">
+    Calculate height ↗
+  </button>
+  <button class="reset" id="reset">Reset values</button>
+
+  <p id="error"></p>
+
+  <div class="formula">
+    <small>CLASS 10 MATHEMATICS</small>
+    <h3>tan θ = Opposite / Adjacent</h3>
+    <p>Height above eye level = Distance × tan θ</p>
+    <p>
+      <strong>
+        Total height = Distance × tan θ + Eye height
+      </strong>
+    </p>
+  </div>
+</section>
+
+<div>
+  <section class="card result">
+    <p class="muted">ESTIMATED OBJECT HEIGHT</p>
+    <div class="result-number">
+      <span id="result">15.50</span>
+      <span id="resultUnit">m</span>
+    </div>
+    <p class="muted" id="feetResult">Approximately 50.85 feet</p>
+
+    <div class="stats">
+      <div>
+        <small>Height above eye level</small>
+        <strong id="above">14.00 m</strong>
+      </div>
+      <div>
+        <small>Elevation angle</small>
+        <strong id="angleStat">35°</strong>
+      </div>
+      <div>
+        <small>Horizontal distance</small>
+        <strong id="distanceStat">20 m</strong>
+      </div>
+      <div>
+        <small>Eye height</small>
+        <strong id="eyeStat">1.50 m</strong>
+      </div>
+    </div>
+  </section>
+
+  <section class="card">
+    <h2>Right-triangle diagram</h2>
+
+    <svg viewBox="0 0 400 250" role="img"
+         aria-label="Triangle showing angle of elevation and object height">
+      <path id="triangleFill"
+            d="M40 205 L340 205 L340 95 Z"
+            fill="#5eead4" opacity=".13"/>
+
+      <path id="triangleLine"
+            d="M40 205 L340 205 L340 95 Z"
+            fill="none" stroke="#5eead4"
+            stroke-width="3" stroke-linejoin="round"/>
+
+      <path d="M320 205 L320 185 L340 185"
+            fill="none" stroke="#60a5fa" stroke-width="2"/>
+
+      <path id="angleArc"
+            d="M85 205 A45 45 0 0 0 80 180"
+            fill="none" stroke="#fbbf24" stroke-width="2"/>
+
+      <text id="diagramAngle" x="85" y="185"
+            fill="#fbbf24" font-size="13">35°</text>
+
+      <text x="175" y="232" fill="#edf4ff"
+            font-size="12" text-anchor="middle"
+            id="diagramDistance">20 m</text>
+
+      <text x="365" y="130" fill="#edf4ff"
+            font-size="12" text-anchor="middle"
+            transform="rotate(-90 365 130)"
+            id="diagramHeight">15.50 m</text>
+
+      <text x="40" y="222" fill="#a4b3c9" font-size="11">
+        Observer
+      </text>
+      <text x="340" y="80" fill="#a4b3c9"
+            font-size="11" text-anchor="middle">Top</text>
+    </svg>
+
+    <p class="muted">
+      Keep the ground level and measure horizontal distance
+      for the most accurate estimate.
+    </p>
+  </section>
+</div>
+
+</div>
+
+<footer>
+  TriMeasure · Learn trigonometry by measuring the world.
+</footer>
+</div>
+
+<script>
+const $ = id => document.getElementById(id);
+
+const factors = {
+  m: 1,
+  cm: 0.01,
+  ft: 0.3048
+};
+
+const unitNames = {
+  m: "m",
+  cm: "cm",
+  ft: "ft"
+};
+
+function format(value, places) {
+  return Number.isFinite(value) ? value.toFixed(places) : "—";
+}
+
+function calculateHeight() {
+  const distance = Number($("distance").value);
+  const distanceUnit = $("distanceUnit").value;
+  const eyeHeight = Number($("eye").value);
+  const eyeUnit = $("eyeUnit").value;
+  const angle = Number($("angle").value);
+  const places = Number($("precision").value);
+
+  $("error").textContent = "";
+  $("angleValue").textContent = angle + "°";
+
+  if (!Number.isFinite(distance) || distance <= 0) {
+    $("error").textContent =
+      "Enter a distance greater than zero.";
+    return;
+  }
+
+  if (!Number.isFinite(eyeHeight) || eyeHeight < 0) {
+    $("error").textContent =
+      "Enter an eye height of zero or more.";
+    return;
+  }
+
+  if (angle <= 0 || angle >= 90) {
+    $("error").textContent =
+      "Angle must be between 0° and 90°.";
+    return;
+  }
+
+  // Convert measurements to metres.
+  const distanceMetres = distance * factors[distanceUnit];
+  const eyeMetres = eyeHeight * factors[eyeUnit];
+
+  // Class 10 trigonometry: tan(theta) = opposite / adjacent.
+  const heightAboveEye =
+    distanceMetres * Math.tan(angle * Math.PI / 180);
+
+  const totalHeight = heightAboveEye + eyeMetres;
+
+  // Display the main result in the selected distance unit.
+  const result = totalHeight / factors[distanceUnit];
+
+  $("result").textContent = format(result, places);
+  $("resultUnit").textContent = unitNames[distanceUnit];
+
+  $("feetResult").textContent =
+    "Approximately " + format(totalHeight / 0.3048, places) +
+    " feet";
+
+  $("above").textContent =
+    format(heightAboveEye / factors[distanceUnit], places) +
+    " " + unitNames[distanceUnit];
+
+  $("angleStat").textContent = angle + "°";
+  $("distanceStat").textContent =
+    format(distance, places) + " " + unitNames[distanceUnit];
+
+  $("eyeStat").textContent =
+    format(eyeMetres / factors[distanceUnit], places) +
+    " " + unitNames[distanceUnit];
+
+  $("diagramAngle").textContent = angle + "°";
+  $("diagramDistance").textContent =
+    format(distance, places) + " " + unitNames[distanceUnit];
+  $("diagramHeight").textContent =
+    format(result, places) + " " + unitNames[distanceUnit];
+
+  // Update the illustrative triangle.
+  const topY = Math.max(
+    55,
+    205 - Math.min(125, Math.tan(angle * Math.PI / 180) * 100)
+  );
+
+  const triangle =
+    `M40 205 L340 205 L340 ${topY} Z`;
+
+  $("triangleFill").setAttribute("d", triangle);
+  $("triangleLine").setAttribute("d", triangle);
+
+  const radians = angle * Math.PI / 180;
+  const arcX = 85 + 45 * Math.cos(radians);
+  const arcY = 205 - 45 * Math.sin(radians);
+
+  $("angleArc").setAttribute(
+    "d",
+    `M85 205 A45 45 0 0 0 ${arcX} ${arcY}`
+  );
+}
+
+$("calculate").addEventListener("click", calculateHeight);
+
+$("reset").addEventListener("click", () => {
+  $("distance").value = 20;
+  $("distanceUnit").value = "m";
+  $("angle").value = 35;
+  $("eye").value = 1.5;
+  $("eyeUnit").value = "m";
+  $("precision").value = 2;
+  calculateHeight();
+});
+
+[
+  "distance",
+  "distanceUnit",
+  "angle",
+  "eye",
+  "eyeUnit",
+  "precision"
+].forEach(id => {
+  $(id).addEventListener("input", calculateHeight);
+});
+
+calculateHeight();
+</script>
+</body>
+</html>
